@@ -40,7 +40,7 @@ def remove_horof_el_jar(text):
     Remove common Arabic prepositions (حروف الجر) from text.
     """
     horof_el_jar = [
-        "من", "إلى", "الى", "عن", "على", "في", "ب", "ك", "ل", "حتى", "منذ", "مذ", "رب", "خلا", "عدا", "حاشا"
+        "من", "إلى", "الى", "عن", "علي", "في", "ب", "ك", "ل", "حتى", "منذ", "مذ", "رب", "خلا", "عدا", "حاشا"
     ]
 
     pattern = r"\b(?:" + "|".join(re.escape(word) for word in horof_el_jar) + r")\b"
@@ -51,7 +51,7 @@ def remove_horof_el_jar(text):
 
 # List of حروف الجر (prepositions)
 prepositions = [
-    "من", "الى", "عن", "على", "في",   # standalone prepositions
+    "من", "الى", "عن", "علي", "في",   # standalone prepositions
 ]
 
 # Letters that attach to words: الباء، اللام، الكاف
