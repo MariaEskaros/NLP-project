@@ -134,6 +134,10 @@ While the dataset has been cleaned and prepared for modeling, several limitation
 
 - Some transcript segments include **code-switching**, where English words or numbers appear within Arabic sentences, reflecting the conversational style of the original content.
 
+- Repeated words within transcripts were not removed during preprocessing to preserve the original context and linguistic structure needed for question answering. While this helps maintain meaningful relationships between the transcript and the questions, it also results in longer input sequences and slightly higher computational cost during training.
+
+- During preprocessing, the tokenizer was fitted on the available dataset before the data splitting stage assuming that the dataset represented the training corpus.
+
 Future milestones will explore improvements such as:
 
 - Improved segmentation of transcript passages to better capture contextual boundaries for modeling.
