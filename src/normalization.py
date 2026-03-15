@@ -20,8 +20,8 @@ def normalize_arabic(text):
     text = re.sub(r"ى", "ي", text)     # Ya variant
     text = re.sub(r"ة", "ه", text)     # Ta marbuta
     text = re.sub(r"[ؤ]", "و", text)   # Waw-Hamza variants
-    text = re.sub(r"[ئ]", "ي", text)   # Waw-Hamza variants
-    text = re.sub(r"ـ", "", text)      # Tatweel / Kashida
+    text = re.sub(r"[ئ]", "ي", text)   # Ya variants
+    text = re.sub(r"ـ", "", text)      # Tatweel 
 
     # Remove special characters (except Arabic letters, English letters, numbers, spaces)
     text = re.sub(r"[^\u0600-\u06FFa-zA-Z0-9\s]", "", text)

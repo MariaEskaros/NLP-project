@@ -132,8 +132,6 @@ While the dataset has been cleaned and prepared for modeling, several limitation
 
 - The transcripts contain a mixture of **Modern Standard Arabic (MSA)** and **Egyptian dialect**, which introduces linguistic variability in vocabulary, grammar, and spelling.
 
-- Some transcript segments include **code-switching**, where English words or numbers appear within Arabic sentences, reflecting the conversational style of the original content.
-
 - Repeated words within transcripts were not removed during preprocessing to preserve the original context and linguistic structure needed for question answering. While this helps maintain meaningful relationships between the transcript and the questions, it also results in longer input sequences and slightly higher computational cost during training.
 
 - During preprocessing, the tokenizer was fitted on the available dataset before the data splitting stage assuming that the dataset represented the training corpus.
@@ -143,6 +141,8 @@ Future milestones will explore improvements such as:
 - Improved segmentation of transcript passages to better capture contextual boundaries for modeling.
 
 - Integration of pretrained Arabic language models to better handle dialectal variation and complex linguistic structures.
+
+- If the provided dataset represents the complete dataset, it will first be split into training and test sets and tokenization will be applied on training set. However, if the dataset is already considered a training set, the data will be structured according to the model’s purpose. For example, the transcript and question will be used as input features while the answer will be used as the target output for training the model.
 
 ---
 
