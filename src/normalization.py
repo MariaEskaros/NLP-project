@@ -24,7 +24,7 @@ def normalize_arabic(text):
     text = re.sub(r"ـ", "", text)      # Tatweel 
 
     # Remove special characters (except Arabic letters, English letters, numbers, spaces)
-    text = re.sub(r"[^\u0600-\u06FFa-zA-Z0-9\s]", "", text)
+    text = re.sub(r"[^\u0621-\u064Aa-zA-Z0-9\s]", "", text)
 
     # Collapse repeated letters (elongation)
     text = re.sub(r"(.)\1{2,}", r"\1", text)
@@ -45,7 +45,7 @@ def remove_horof_el_jar(text):
 
     pattern = r"\b(?:" + "|".join(re.escape(word) for word in horof_el_jar) + r")\b"
     text = re.sub(pattern, " ", text)
-    text = re.sub(r"\s+", " ", text).strip()
+    text = re.sub(r"\s+", " ", text).strip() 
     return text
 
 
@@ -65,5 +65,5 @@ def remove_horof_el_jar(text):
     text = re.sub(r'\b[' + ''.join(attached_prepositions) + r'](\w+)', r'\1', text)
     
     text = re.sub(r'\s+', ' ', text).strip()
-    
+
     return text
