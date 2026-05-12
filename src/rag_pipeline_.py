@@ -12,13 +12,19 @@ class RAGPipeline:
         llm,
         prompt_type: str = "strict",
         memory=None,
-        use_memory: bool = True
+        use_memory: bool = True,
+        memory_strategy: str = "full",
+        last_n_turns: int = 2,
+        max_history_chars: int = 1500
     ):
         self.retriever = retriever
         self.llm = llm
         self.prompt_type = prompt_type
         self.memory = memory
         self.use_memory = use_memory
+        self.memory_strategy = memory_strategy
+        self.last_n_turns = last_n_turns
+        self.max_history_chars = max_history_chars
 
     def build_prompt(self, question: str, retrieved_chunks):
         if self.prompt_type == "minimal":
@@ -31,7 +37,12 @@ class RAGPipeline:
             base_prompt = build_strict_grounded_prompt(question, retrieved_chunks)
 
         if self.use_memory and self.memory is not None:
-            history_text = self.memory.get_full_history_text()
+            history_text = self.memory.get_history_text(
+                strategy=self.memory_strategy,
+                last_n_turns=self.last_n_turns,
+                max_chars=self.max_history_chars,
+                llm=self.llm
+            )
 
             if history_text.strip():
                 base_prompt = f"""
@@ -64,5 +75,7 @@ Current turn:
             "retrieved_chunks": retrieved_chunks,
             "prompt_type": self.prompt_type,
             "model": getattr(self.llm, "model_name", "unknown"),
-            "used_memory": self.use_memory
+            "used_memory": self.use_memory,
+            "memory_strategy": self.memory_strategy,
+            "prompt_chars": len(prompt)
         }
