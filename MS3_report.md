@@ -19,7 +19,7 @@ ID: 55-1622
 T-1
 
 ## Member 3
-**Malak Hesham Montasse**  
+**Malak Hesham Montasser**  
 ID: 55-6656  
 [malak.montasser@student.guc.edu.eg](mailto:malak.montasser@student.guc.edu.eg)  
 T-2
@@ -133,7 +133,6 @@ The vector database is responsible for:
 * semantic nearest-neighbor retrieval
 * efficient similarity search
 
-The notebook checks whether embeddings already exist before re-adding them.
 
 ---
 
@@ -433,10 +432,10 @@ Lower latency is preferred.
 
 ## Model Comparison
 
-| Model            | BERTScore | Semantic Similarity | Grounding Score | Latency (s) |
-| ---------------- | --------- | ------------------- | --------------- | ----------- |
-| Groq             | 0.6652    | 0.1756              | 0.1632          | 0.4492      |
-| HuggingFace_Qwen | 0.5382    | -0.0144             | 0.0077          | 14.9627     |
+| Model | BERTScore | Semantic Similarity | Grounding Score | Latency (s) |
+| --- | --- | --- | --- | --- |
+| Groq | 0.6609 | 0.1870 | 0.1630 | 5.1662 |
+| HuggingFace_Qwen | 0.6523 | 0.3401 | 0.3600 | 1.7536 |
 
 ---
 
@@ -446,37 +445,67 @@ Lower latency is preferred.
 
 Groq achieved:
 
-* higher semantic similarity
-* higher grounding score
-* lower latency
-* stronger overall generation quality
+- the highest BERTScore
+- competitive text generation quality
+- reasonable contextual grounding
 
 The Groq model produced:
 
-* more relevant answers
-* better contextual grounding
-* faster responses
+- fluent generated answers
+- good lexical and contextual similarity to the reference answers
+- stable response generation quality
+
+However:
+
+- semantic similarity remained relatively low
+- grounding score was weaker compared to HuggingFace_Qwen
+- latency was higher than the HuggingFace model
+
+This suggests that although Groq generated more natural responses, some generated answers were not strongly aligned with the retrieved transcript context.
 
 ---
 
-## HuggingFace Performance
+## HuggingFace_Qwen Performance
 
-The local HuggingFace model showed:
+The HuggingFace_Qwen model achieved:
 
-* lower semantic similarity
-* lower grounding quality
-* significantly higher latency
+- the highest semantic similarity
+- the highest grounding score
+- the lowest latency
 
-The negative semantic similarity value suggests:
+The model produced:
 
-* weak semantic alignment with reference answers
-* possible hallucination
-* low retrieval grounding
-* unstable local generation
+- answers that were more semantically aligned with the reference answers
+- stronger grounding to the retrieved transcript chunks
+- faster inference time
 
-The slower inference is expected because the model was executed locally on CPU.
+The higher grounding score indicates:
+
+- reduced hallucination behavior
+- better utilization of retrieved context
+- stronger retrieval-conditioned generation
+
+Although its BERTScore was slightly lower than Groq, the difference was small, indicating that both models achieved comparable text generation quality.
 
 ---
+
+# Overall Analysis
+
+The evaluation results indicate that:
+
+- Groq achieved slightly stronger text generation quality according to BERTScore.
+- HuggingFace_Qwen achieved better semantic correctness and grounding performance.
+- HuggingFace_Qwen also produced faster responses during evaluation.
+
+The relatively low semantic similarity and grounding values across both models suggest that retrieval quality and chunk relevance can still be improved further through:
+
+- better chunking strategies
+- embedding optimization
+- vector database rebuilding
+- prompt refinement
+- retrieval threshold tuning
+
+Overall, the HuggingFace_Qwen model demonstrated stronger retrieval-grounded behavior, while Groq demonstrated slightly stronger generative fluency.
 
 # Challenges Encountered
 
@@ -486,20 +515,8 @@ During implementation, several technical issues were encountered:
 
 Groq API limits caused temporary generation failures due to token quotas.
 
----
 
-
-## Local CPU Inference Limitations
-
-Local HuggingFace inference experienced:
-
-* high latency
-* weaker generation quality
-* slower evaluation
-
----
-
-## Evaluation Stability
+## Evaluation Instability
 
 Evaluation metrics changed across reruns because:
 
@@ -507,6 +524,65 @@ Evaluation metrics changed across reruns because:
 * cache behavior changed
 * retrieval order changed
 * different answers were generated
+
+---
+# Limitations
+
+The current RAG system has several limitations that can be improved in future work.
+
+## Retrieval Quality Limitations
+
+Although the system uses semantic retrieval with vector embeddings, some retrieved chunks were not always strongly relevant to the user query. This occasionally caused weak grounding and lower semantic similarity scores.
+
+The retrieval performance was affected by:
+
+- chunk segmentation quality
+- embedding representation quality
+- overlap configuration
+- transcript noise and conversational phrasing
+
+---
+
+## Embedding Model Limitations
+
+The multilingual embedding model improved Arabic semantic retrieval, but some Arabic expressions and paraphrased questions were still difficult to match accurately.
+
+In addition, changing embedding models requires rebuilding the vector database to maintain retrieval consistency.
+
+---
+
+## Evaluation Dataset Size
+
+The evaluation dataset was relatively small and focused on a limited number of transcript domains. A larger and more diverse benchmark would provide more reliable evaluation results and stronger generalization analysis.
+
+---
+
+## Latency and API Dependency
+
+The system depends on external APIs for some LLMs, which introduces:
+
+- network latency
+- provider rate limits
+- inconsistent response times
+
+This affects real-time responsiveness and evaluation stability.
+
+---
+
+## Out-of-Domain Detection Limitations
+
+The out-of-domain detection mechanism relies mainly on retrieval relevance thresholds. Some valid in-domain questions may still be incorrectly rejected when retrieval confidence is weak.
+
+Similarly, some unrelated questions may occasionally pass the threshold if semantically similar chunks are retrieved.
+
+---
+## Reference Answer Length Limitation
+
+The reference answers in the evaluation dataset were relatively short and concise, while the generated answers produced by the LLMs were often longer and more detailed.
+
+As a result, some evaluation metrics such as ROUGE-L may underestimate the actual quality of the generated responses because lexical overlap becomes lower even when the generated answer is semantically correct.
+
+This limitation particularly affects generative language models that naturally produce explanatory and paraphrased responses rather than short extractive answers.
 
 ---
 
@@ -543,13 +619,8 @@ Potential future improvements include:
 * hybrid retrieval methods
 * reranking models
 * improved Arabic embeddings
-* multilingual support
-* adaptive chunking
-* better hallucination detection
+* hallucination detection
 * larger evaluation datasets
-* retrieval reranking pipelines
-* advanced conversational memory compression
-
 
 ---
 
