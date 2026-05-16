@@ -35,8 +35,14 @@ class ChromaVectorStore:
         )
 
     def search(self, query_embedding, top_k: int = 5):
+        # NEW: Check if it's a NumPy array (has .tolist()) or already a standard list
+        if hasattr(query_embedding, "tolist"):
+            embedding_list = query_embedding.tolist()
+        else:
+            embedding_list = query_embedding
+
         results = self.collection.query(
-            query_embeddings=[query_embedding.tolist()],
+            query_embeddings=[embedding_list],
             n_results=top_k
         )
 
