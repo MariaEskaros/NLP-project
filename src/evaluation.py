@@ -4,6 +4,7 @@ import time
 from pathlib import Path
 
 import numpy as np
+from bert_score import score as bertscore
 
 
 def load_test_sets(test_dir: Path):
@@ -109,41 +110,41 @@ def semantic_similarity_score(generated_answer, reference_answer, embedding_mode
     return cosine_similarity(gen_emb, ref_emb)
 
 
-def rouge_l_score(generated_answer, reference_answer):
-    """
-    ROUGE-L F1 based on longest common subsequence.
-    """
+# def rouge_l_score(generated_answer, reference_answer):
+#     """
+#     ROUGE-L F1 based on longest common subsequence.
+#     """
 
-    gen_tokens = tokenize_text(generated_answer)
-    ref_tokens = tokenize_text(reference_answer)
+#     gen_tokens = tokenize_text(generated_answer)
+#     ref_tokens = tokenize_text(reference_answer)
 
-    if not gen_tokens or not ref_tokens:
-        return 0.0
+#     if not gen_tokens or not ref_tokens:
+#         return 0.0
 
-    m = len(ref_tokens)
-    n = len(gen_tokens)
+#     m = len(ref_tokens)
+#     n = len(gen_tokens)
 
-    dp = [[0] * (n + 1) for _ in range(m + 1)]
+#     dp = [[0] * (n + 1) for _ in range(m + 1)]
 
-    for i in range(m):
-        for j in range(n):
-            if ref_tokens[i] == gen_tokens[j]:
-                dp[i + 1][j + 1] = dp[i][j] + 1
-            else:
-                dp[i + 1][j + 1] = max(
-                    dp[i][j + 1],
-                    dp[i + 1][j]
-                )
+#     for i in range(m):
+#         for j in range(n):
+#             if ref_tokens[i] == gen_tokens[j]:
+#                 dp[i + 1][j + 1] = dp[i][j] + 1
+#             else:
+#                 dp[i + 1][j + 1] = max(
+#                     dp[i][j + 1],
+#                     dp[i + 1][j]
+#                 )
 
-    lcs = dp[m][n]
+#     lcs = dp[m][n]
 
-    precision = lcs / n
-    recall = lcs / m
+#     precision = lcs / n
+#     recall = lcs / m
 
-    if precision + recall == 0:
-        return 0.0
+#     if precision + recall == 0:
+#         return 0.0
 
-    return (2 * precision * recall) / (precision + recall)
+#     return (2 * precision * recall) / (precision + recall)
 
 
 def grounding_score(answer, retrieved_chunks):
@@ -170,6 +171,21 @@ def grounding_score(answer, retrieved_chunks):
 
     return len(overlap) / len(answer_tokens)
 
+def bert_score_metric(generated_answer, reference_answer):
+    """
+    BERTScore F1 for text generation quality.
+    Higher is better.
+    """
+
+    P, R, F1 = bertscore(
+        [generated_answer],
+        [reference_answer],
+        lang="ar",
+        verbose=False
+    )
+
+    return float(F1[0])
+
 
 def run_rag_evaluation(rag_pipeline, test_items, embedding_model):
     results = []
@@ -187,10 +203,10 @@ def run_rag_evaluation(rag_pipeline, test_items, embedding_model):
         generated_answer = rag_result.get("answer", "")
         retrieved_chunks = rag_result.get("retrieved_chunks", [])
 
-        rouge_l = rouge_l_score(
-            generated_answer,
-            reference_answer
-        )
+        # rouge_l = rouge_l_score(
+        #     generated_answer,
+        #     reference_answer
+        # )
 
         semantic_score = semantic_similarity_score(
             generated_answer,
@@ -202,6 +218,10 @@ def run_rag_evaluation(rag_pipeline, test_items, embedding_model):
             generated_answer,
             retrieved_chunks
         )
+        bert_f1 = bert_score_metric(
+        generated_answer,
+        reference_answer
+)
 
         results.append({
             "question_id": idx,
@@ -209,9 +229,10 @@ def run_rag_evaluation(rag_pipeline, test_items, embedding_model):
             "question": question,
             "reference_answer": reference_answer,
             "generated_answer": generated_answer,
-            "rouge_l": rouge_l,
+            # "rouge_l": rouge_l,
             "semantic_similarity": semantic_score,
             "grounding_score": ground_score,
+            "bert_score": bert_f1,
             "latency_seconds": latency,
             "cache_hit": rag_result.get("cache_hit", False),
             "out_of_domain": rag_result.get("out_of_domain", False),
