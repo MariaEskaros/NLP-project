@@ -1,0 +1,7 @@
+﻿Timestamp,User Query,Model Used,Context Status,Out of Domain?,System Response,Expected Answer (Manual),Evaluation (Manual)
+2026-05-16 05:41:38,ليه دم الأخطبوط أزرق؟,llama-3.1-8b-instant,Cache Hit (0 retrieved),False,"لأن دم الأخطبوط يحتوي على بروتين اسمه هيموسيانين، والذي يبني علي النحاس، ويحسن من قدرة الأخطبوط على امتصاص الاكسجين.
+
+[Source: الأخطبوط  الدحيح | Rank: 1]",,
+2026-05-16 05:42:34,ليه دم الأخطبوط أزرق؟,llama-3.1-8b-instant,Found 5 chunks,False,"دم الأخطبوط أزرق لأن فيه بروتين اسمه هيموسيانين، دا بيبقي مبني علي النحاس، وتلاقيه بيمسك الاكسجين احسن من الهيموجلوبين.
+
+[Source: الأخطبوط  الدحيح | Rank: 1]",,
